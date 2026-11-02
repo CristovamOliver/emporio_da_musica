@@ -1,9 +1,9 @@
 import os
-from pathlib import Path
+
 from decouple import config
 import re
+from csv_loader import read_csv_file
 from prompt import SYSTEM_PROMPT
-import pandas as pd
 
 from langchain.tools import tool
 from langchain_openai import ChatOpenAI
@@ -12,21 +12,6 @@ from langgraph.checkpoint.memory import InMemorySaver
 
 
 os.environ["OPENAI_API_KEY"] = config("OPENAI_API_KEY")
-
-BASE_DIR = Path(__file__).resolve().parent
-FILE_PATH = BASE_DIR / "data"
-
-
-def read_csv_file(filename: str) -> list[dict]:
-    file_path = FILE_PATH / filename
-
-    if not file_path.is_file():
-        raise FileNotFoundError(f"Arquivo não encontrado: {file_path}")
-
-    df = pd.read_csv(file_path)
-
-    return df.to_dict(orient="records")
-
 
 @tool
 def get_categories() -> list[dict]:
