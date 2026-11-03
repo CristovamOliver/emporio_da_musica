@@ -1,0 +1,34 @@
+Empório da Música!
+ Como posso ajudá-lo?
+
+
+Digite 'sair' para encerrar.
+
+Você: quantos produtos temos no estoque?
+
+Assistente: Temos 402 unidades disponíveis em estoque, considerando apenas produtos com status ativo e com quantidade disponível.
+
+Isso corresponde a 61 modelos de produtos disponíveis no momento.
+
+Obs.: se considerar todos os registros cadastrados, incluindo itens descontinuados ou “em breve”, o total seria 417 unidades.
+
+Você: qual o produto mais caro?
+
+Assistente: O produto mais caro cadastrado é o Teclado Sintetizador Nord Synth 2 Pro, no valor de R$ 19.567,00.
+
+Temos 3 unidades em estoque e o produto está com status ativo.
+
+Você: qual o produto que está faltando no estoque?
+
+Assistente: No momento, o produto ativo que está faltando no estoque é:
+
+- Giannini GF-3D Dreadnought Sunburst — estoque: 0 unidades
+
+Também existe um item com estoque zerado, mas ele está descontinuado:
+
+- Shelby SN-7C 7 Cordas Nylon Natural — estoque: 0 unidades — status: descontinuado
+
+Você: okay, obrigado
+
+Assistente: Disponha! 😊  
+Se precisar consultar preços, estoque ou ajuda para escolher algum instrumento, é só chamar.

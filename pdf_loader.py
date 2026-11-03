@@ -1,6 +1,6 @@
 from pathlib import Path
-from pypdf import PdfReader
-
+from langchain_community.document_loaders import PyPDFLoader
+import re
 
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -19,20 +19,22 @@ def read_pdf_file(filename: str) -> Path:
 
 def load_pdf_file():
     file_path = read_pdf_file("políticas_da_loja.pdf")
-    reader = PdfReader(file_path)
+    loader = PyPDFLoader(file_path)
+    document = loader.load()
 
-    documents = [
-        {
-            "page_number": page_number,
-            "text": page.extract_text() or ""
-        }
-        for page_number, page in enumerate(reader.pages, start=1)
-    ]
+    for doc in document:
+        text = doc.page_content
 
-    print(f"Total de páginas do pdf: {len(documents)}")
+        # Junta palavras separadas por quebras de linha
+        text = re.sub(r'\n+', ' ', text)
 
-    return documents
+        # Remove espaços duplicados
+        text = re.sub(r'\s+', ' ', text)
 
+        doc.page_content = text.strip()
+
+    return document
 
 if __name__ == "__main__":
-    documents = load_pdf_file()
+    document = load_pdf_file()
+    

@@ -1,0 +1,195 @@
+# 🎸 Empório da Música — AI Customer Service Agent
+
+Agente inteligente de atendimento ao cliente desenvolvido em Python, utilizando Large Language Models (LLMs), LangChain e Retrieval-Augmented Generation (RAG).
+
+O projeto simula o atendimento virtual da **Empório da Música**, uma loja de instrumentos musicais localizada em Campo Grande/MS.
+
+O objetivo é oferecer um atendimento automatizado, capaz de consultar informações comerciais, auxiliar clientes e responder perguntas com base nos dados e nas políticas internas da empresa.
+
+## 🚀 Funcionalidades
+
+- Atendimento conversacional em português.
+- Consulta de clientes, produtos, categorias e vendas.
+- Consulta de preços, disponibilidade e pedidos.
+- Consulta de promoções.
+- Recuperação de informações das políticas internas utilizando RAG.
+- Histórico de conversação durante a sessão.
+- Uso de ferramentas (Tools) para consultar dados estruturados.
+
+## 🏗️ Arquitetura
+
+O projeto utiliza uma arquitetura baseada em agente de IA, com ferramentas especializadas para consultar diferentes fontes de informação.
+
+### Fluxo de funcionamento
+
+1. O usuário envia uma pergunta pelo terminal.
+2. O agente interpreta a solicitação utilizando o LLM.
+3. Quando necessário, seleciona uma ferramenta especializada.
+4. As ferramentas consultam os arquivos CSV ou a base vetorial de políticas.
+5. O resultado é utilizado pelo agente para elaborar uma resposta.
+6. A resposta é apresentada ao usuário.
+
+### Retrieval-Augmented Generation (RAG)
+
+Para responder perguntas relacionadas às políticas internas da empresa, foi implementada uma abordagem RAG.
+
+O processo consiste em:
+
+1. Carregar o documento PDF com as políticas da empresa.
+2. Dividir o conteúdo em chunks de 1.000 caracteres, com sobreposição de 200 caracteres.
+3. Gerar embeddings utilizando o modelo `text-embedding-3-small`, da OpenAI.
+4. Armazenar os vetores no ChromaDB.
+5. Recuperar os três trechos mais relevantes para cada consulta.
+6. Disponibilizar o contexto recuperado ao agente por meio da ferramenta `get_policies`.
+
+Essa abordagem permite consultar documentos externos sem precisar inserir todo o conteúdo diretamente no System Prompt.
+
+## 🛠️ Tecnologias utilizadas
+
+| Tecnologia | Finalidade |
+|---|---|
+| Python | Linguagem principal |
+| LangChain | Construção do agente e integração com ferramentas |
+| OpenAI | Modelo de linguagem e embeddings |
+| ChromaDB | Armazenamento e recuperação vetorial |
+| Pandas | Leitura e manipulação dos arquivos CSV |
+| PyPDFLoader | Extração de conteúdo dos documentos PDF |
+
+## 📂 Estrutura do projeto
+
+```text
+emporio-da-musica/
+│
+├── data/
+│   ├── customers.csv
+│   ├── products.csv
+│   ├── categories.csv
+│   ├── sales.csv
+│   └── politicas.pdf
+│
+├── main.py
+├── prompt.py
+├── rag.py
+├── pdf_loader.py
+├── requirements.txt
+├── .env
+├── .gitignore
+└── README.md
+```
+
+## ⚙️ Configuração do ambiente
+
+### 1. Pré-requisitos
+
+- Python 3.10 ou superior.
+- Conta e API Key da OpenAI.
+
+### 2. Clone o repositório
+
+```bash
+git clone URL_DO_REPOSITORIO
+cd emporio-da-musica
+```
+
+### 3. Crie um ambiente virtual
+
+```bash
+python3 -m venv .venv
+```
+
+Ative o ambiente virtual:
+
+**macOS / Linux**
+
+```bash
+source .venv/bin/activate
+```
+
+**Windows**
+
+```bash
+.venv\Scripts\activate
+```
+
+### 4. Instale as dependências
+
+```bash
+pip install -r requirements.txt
+```
+
+### 5. Configure as variáveis de ambiente
+
+Crie um arquivo `.env` na raiz do projeto:
+
+```env
+OPENAI_API_KEY=sua_api_key
+```
+
+Não compartilhe sua chave de API nem envie o arquivo `.env` para o GitHub.
+
+## ▶️ Como executar
+
+Com o ambiente virtual ativado e as dependências instaladas:
+
+```bash
+python main.py
+```
+
+O agente será iniciado no terminal e estará pronto para receber perguntas.
+
+## 🧠 Decisões técnicas
+
+### Framework — LangChain
+
+Foi escolhido o LangChain para facilitar a integração entre o modelo de linguagem, as ferramentas de consulta e a recuperação de informações.
+
+A utilização de agentes permite que o modelo decida quais ferramentas utilizar de acordo com a intenção do usuário.
+
+### Modelo de linguagem (LLM)
+
+**Modelo utilizado:** [gpt-5.5]
+
+O LLM é responsável por interpretar as solicitações, selecionar ferramentas e elaborar respostas em linguagem natural.
+
+### Estratégia de Retrieval — RAG
+
+O RAG foi utilizado para separar o conhecimento institucional do comportamento do agente.
+
+As políticas da empresa são consultadas sob demanda, evitando sobrecarregar o System Prompt com documentos extensos.
+
+A recuperação utiliza busca por similaridade vetorial, com `k=3`, retornando os três trechos mais relevantes para cada consulta.
+
+### Estratégia de Prompt
+
+O System Prompt define a identidade do agente, seu papel no atendimento, as regras de comportamento e as orientações para utilização das ferramentas.
+
+As instruções de negócio ficam separadas da implementação das ferramentas, facilitando a manutenção e evolução do projeto.
+
+### Gerenciamento de conversação
+
+Foi utilizado `InMemorySaver` para manter o estado da conversação durante a execução, associado a um `thread_id`.
+
+Isso permite preservar o contexto das interações dentro da sessão, sem implementar persistência de histórico entre execuções.
+
+## ⚠️ Limitações conhecidas e melhorias futuras
+
+Com mais tempo de desenvolvimento, algumas melhorias poderiam ser implementadas:
+
+- Persistência do histórico de conversação em banco de dados.
+- Implementação de testes automatizados.
+- Tratamento mais robusto de erros nas consultas às ferramentas.
+- Melhorias na avaliação da qualidade das respostas do RAG.
+- Implementação de uma interface web para o atendimento.
+
+
+## 🤖 Uso de assistentes de código
+
+**Ferramenta de consulta utilizadas:** [ChatGPT, PyCodeBR, LangChain Documentation]
+
+O assistente de IA foi utilizado como apoio durante o desenvolvimento, principalmente para:
+
+- Apoio na implementação e revisão de código Python.
+- Discussão de decisões arquiteturais.
+- Orientação sobre integração entre LangChain, LLM e ferramentas.
+- Apoio na implementação da estratégia RAG.
+- Identificação de melhorias e boas práticas de desenvolvimento.

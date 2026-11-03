@@ -1,0 +1,38 @@
+Empório da Música!
+ Como posso ajudá-lo?
+
+
+Digite 'sair' para encerrar.
+
+Você: qual a missao da emporio da musica?
+
+Assistente: A missão da Empório da Música é:
+
+“Democratizar o acesso a instrumentos musicais de qualidade na região Centro-Oeste, oferecendo atendimento especializado e preços competitivos, contribuindo para o desenvolvimento cultural e musical da comunidade.”
+
+Você: qual o desconto para produtos pagos via pix
+
+Assistente: Para produtos pagos via PIX, a Empório da Música oferece 5% de desconto sobre o preço de tabela, em pagamento à vista.
+
+Importante: esse desconto não se aplica sobre preços já promocionais, pois as promoções não são cumulativas.
+
+Você: qual o prazo para devolucao do produto>
+
+Assistente: O prazo depende do motivo da devolução/troca:
+
+- Compras online — direito de arrependimento: até 7 dias corridos após o recebimento do produto.
+- Troca por preferência (cor, modelo etc.): até 7 dias, conforme disponibilidade.
+- Defeito de fabricação: troca em até 30 dias corridos após a compra. Depois desse prazo, deve ser acionada a garantia do fabricante.
+
+Em todos os casos, o produto deve estar em condições adequadas, preferencialmente na embalagem original e com acessórios/manuais.
+
+Você: qual foi a primeira pergunta que te fiz?
+
+Assistente: A primeira pergunta que você me fez foi:
+
+“qual a missao da emporio da musica?”
+
+Você: tchau
+
+Assistente: Até mais! 😊  
+Quando precisar, a Empório da Música está à disposição. 🎶

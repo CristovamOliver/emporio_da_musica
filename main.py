@@ -1,17 +1,20 @@
-import os
-
-from decouple import config
+from decouple import config as env_config
 import re
 from csv_loader import read_csv_file
 from prompt import SYSTEM_PROMPT
+from rag import create_retriever
 
 from langchain.tools import tool
 from langchain_openai import ChatOpenAI
 from langchain.agents import create_agent
 from langgraph.checkpoint.memory import InMemorySaver
 
+OPENAI_API_KEY = env_config("OPENAI_API_KEY")
 
-os.environ["OPENAI_API_KEY"] = config("OPENAI_API_KEY")
+llm = ChatOpenAI(model="gpt-5.5", temperature=0, api_key=env_config("OPENAI_API_KEY"))
+
+retriever = create_retriever()
+
 
 @tool
 def get_categories() -> list[dict]:
@@ -36,7 +39,7 @@ def get_categories() -> list[dict]:
 def get_customers() -> list[dict]:
     """
     Retrieves all customer records from the CSV database.
-    
+
     Use this tool when you need to:
     - List all registered customers.
     - Identify available customers.
@@ -51,11 +54,11 @@ def get_customers() -> list[dict]:
     return customers_df
 
 
-@tool 
+@tool
 def get_order_items() -> list[dict]:
     """
     Retrieves all order item records from the CSV database.
-    
+
     Use this tool when you need to:
     - List all registered order items.
     - Identify available order items.
@@ -74,7 +77,7 @@ def get_order_items() -> list[dict]:
 def get_orders() -> list[dict]:
     """
     Retrieves all orders records from the CSV database.
-    
+
     Use this tool when you need to:
     - List all registered orders.
     - Identify available orders.
@@ -93,7 +96,7 @@ def get_orders() -> list[dict]:
 def get_products() -> list[dict]:
     """
     Retrieves all product records from the CSV database.
-    
+
     Use this tool when you need to:
     - List all registered products.
     - Identify available products.
@@ -112,7 +115,7 @@ def get_products() -> list[dict]:
 def get_promotions() -> list[dict]:
     """
     Retrieves all promotion records from the CSV database.
-    
+
     Use this tool when you need to:
     - List all registered promotions.
     - Identify available promotions.
@@ -127,52 +130,61 @@ def get_promotions() -> list[dict]:
     return promotions_df
 
 
-llm = ChatOpenAI(
-    model="gpt-5.5",
-    temperature=0,
-    api_key=config("OPENAI_API_KEY")
-)
+@tool
+def get_policies(query: str) -> str:
+    """
+    Retrieves all policies records from the pdf políticas_da_loja.pdf.
 
-tools = [get_categories, get_customers, get_order_items, get_orders, get_products, get_promotions]
+    Use this tool when you need to:
+    - List all registered policies.
+    - Identify available policies.
+    - Answer questions about the company's policies.
+    """
+
+    documents = retriever.invoke(query)
+    if not documents:
+        return "Essa informacão não foi encontrada nas políticas da loja."
+    context = "\n\n".join(document.page_content for document in documents)
+    return context
 
 
-def remove_markdown(text: str) -> str:
-    # Remove negrito e itálico
-    text = re.sub(r'\*\*(.*?)\*\*', r'\1', text)
-    text = re.sub(r'\*(.*?)\*', r'\1', text)
-
-    # Remove títulos
-    text = re.sub(r'^#+\s*', '', text, flags=re.MULTILINE)
-
-    # Remove crases de código
-    text = re.sub(r'`{1,3}', '', text)
-
-    return text
+tools = [
+    get_categories,
+    get_customers,
+    get_order_items,
+    get_orders,
+    get_products,
+    get_promotions,
+    get_policies,
+]
 
 
 checkpointer = InMemorySaver()
 
 agent = create_agent(
-    model=llm,
-    tools=tools,
-    system_prompt=SYSTEM_PROMPT,
-    checkpointer=checkpointer
+    model=llm, tools=tools, system_prompt=SYSTEM_PROMPT, checkpointer=checkpointer
 )
 
-config = {
-    "configurable": {
-        "thread_id": "conversation_001"
-    }
-}
+agent_config = {"configurable": {"thread_id": "conversation_001"}}
+
+
+def remove_markdown(text: str) -> str:
+    # Remove negrito e itálico
+    text = re.sub(r"\*\*(.*?)\*\*", r"\1", text)
+    text = re.sub(r"\*(.*?)\*", r"\1", text)
+
+    # Remove títulos
+    text = re.sub(r"^#+\s*", "", text, flags=re.MULTILINE)
+
+    # Remove crases de código
+    text = re.sub(r"`{1,3}", "", text)
+
+    return text
+
 
 def chat(user_input: str) -> str:
     response = agent.invoke(
-        {
-            "messages": [
-                {"role": "user", "content": user_input}
-            ]
-        },
-        config=config
+        {"messages": [{"role": "user", "content": user_input}]}, config=agent_config
     )
 
     assistant_response = response["messages"][-1].content
